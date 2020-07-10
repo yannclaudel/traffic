@@ -1,0 +1,40 @@
+
+################################
+	influxdb
+################################
+docker run -p 8086:8086 -v //C/dev/docker influxdb
+docker run -p 8086:8086 -v C:\dev\docker:/var/lib/influxdb influxdb
+
+
+mYKyMyL-aMyg-oxYLbehfYq@NEH
+
+mYKyMyL-aMyg-oxYLbehfYq@NEH
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+
+################################
+	mysql
+################################
+docker run --detach --name=mysqldb --publish 3306:3306 -v C:\dev\docker:/var/lib/mysql mysql/mysql-server
+winpty docker.exe exec -it mysql-db mysql -uroot -p
+
+winpty docker.exe exec -it mysql-db mysql -uspringuser db_example -pspringuserpwd
+
+mysql -u USERNAME -h HOSTNAMEORIP DATABASENAME -p
+
+
+INSERT INTO pet (name, owner, species, sex,birth,death) VALUES ('zelda', 'as', 'chat', 'F',NULL,NULL);
+
+CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20),
+    -> species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+
+################################
+	timescaledb
+################################
+
+docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg12
+docker exec -it timescaledb psql -U postgres
+
+################################
+	graphana
+################################
