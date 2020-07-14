@@ -32,28 +32,56 @@ CREATE TABLE meteo(
     time        TIMESTAMPTZ         NOT NULL,
     point       text       NOT NULL,
     humidity    NUMERIC    NULL,
-    no_precipitation text   NOT NULL,
+    no_precipitation text    NULL,
     millimetres_per_hour_intensity    NUMERIC    NULL,
     road_surface_temperature    NUMERIC    NULL,
     temperature_below_road_surface    NUMERIC    NULL,
-    weather_related_road_condition_type text   NOT NULL,
+    weather_related_road_condition_type text    NULL,
     air_temperature    NUMERIC    NULL,
     dew_point_temperature    NUMERIC    NULL,
     wind_speed    NUMERIC    NULL,
     maximum_wind_speed    NUMERIC    NULL,
     wind_direction_bearing    NUMERIC    NULL,
-    status_type text   NOT NULL);
+    status_type text  NULL);
+
+CREATE TABLE telraam(
+    time        TIMESTAMPTZ         NOT NULL,
+    camera       text       NOT NULL,
+    timezone text NULL,
+    pedestrian NUMERIC NULL,
+    bike NUMERIC NULL,
+    car NUMERIC NULL,
+    lorry NUMERIC NULL,
+    pedestrian_lft NUMERIC NULL,
+    bike_lft NUMERIC NULL,
+    car_lft NUMERIC NULL,
+    lorry_lft NUMERIC NULL,
+    pedestrian_rgt NUMERIC NULL,
+    bike_rgt NUMERIC NULL,
+    car_rgt NUMERIC NULL,
+    lorry_rgt NUMERIC NULL,
+    car_speed_00 NUMERIC NULL,
+    car_speed_10 NUMERIC NULL,
+    car_speed_20 NUMERIC NULL,
+    car_speed_30 NUMERIC NULL,
+    car_speed_40 NUMERIC NULL,
+    car_speed_50 NUMERIC NULL,
+    car_speed_60 NUMERIC NULL,
+    car_speed_70 NUMERIC NULL);
 
 SELECT create_hypertable('trafic_time', 'time');
 SELECT create_hypertable('meteo', 'time');
+SELECT create_hypertable('telraam', 'time');
 
 CREATE UNIQUE INDEX on trafic_time (time, camera);
 CREATE UNIQUE INDEX on camera (camera);
 CREATE UNIQUE INDEX on meteo (time, point);
+CREATE UNIQUE INDEX on telraam (time, camera);
 
 GRANT ALL PRIVILEGES ON TABLE trafic_time TO traficuser;
 GRANT ALL PRIVILEGES ON TABLE camera TO traficuser;
 GRANT ALL PRIVILEGES ON TABLE meteo TO traficuser;
+GRANT ALL PRIVILEGES ON TABLE telraam TO traficuser;
 
 INSERT INTO camera(camera,latitude,longitude,direction,direction_distance,road) VALUES ('A1.GT.24538',49.667915,6.3771095,'outboundFromTown',24538,'A1');
 INSERT INTO camera(camera,latitude,longitude,direction,direction_distance,road) VALUES ('A1.GT.26600',49.679363,6.399515,'outboundFromTown',26600,'A1');
@@ -381,5 +409,3 @@ INSERT INTO meteo(time , point , humidity , no_precipitation , millimetres_per_h
                  VALUES (time, :id, :humidity, :noPrecipitation, :millimetresPerHourIntensity, :roadSurfaceTemperature, :temperatureBelowRoadSurface, :weatherRelatedRoadConditionType, :airTemperature, :dewPointTemperature, :windSpeed, :maximumWindSpeed, :windDirectionBearing, :statusType)
                  ON CONFLICT (time, camera) DO NOTHING
 
-
-time , point , humidity , no_precipitation , millimetres_per_hour_intensity , road_surface_temperature , temperature_below_road_surface , weather_related_road_condition_type , air_temperature , dew_point_temperature , wind_speed , maximum_wind_speed , wind_direction_bearing , status_type

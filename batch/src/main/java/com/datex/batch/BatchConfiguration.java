@@ -1,12 +1,7 @@
 package com.datex.batch;
 
-import com.datex.batch.model.MeteoMeasure;
-import com.datex.batch.model.TrafficMeasure;
-import com.datex.batch.model.TraficPoint;
-import com.datex.batch.steps.DatexMeteoProcessor;
-import com.datex.batch.steps.DatexMeteoReader;
-import com.datex.batch.steps.DatexTrafficProcessor;
-import com.datex.batch.steps.DatexTrafficReader;
+import com.datex.batch.model.*;
+import com.datex.batch.steps.*;
 import com.datex.batch.tasklet.LogTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -64,9 +59,21 @@ public class BatchConfiguration {
     }
 
     @Bean
+    @StepScope
+    public TelraamTrafficReader getTelraamTrafficReader() {
+        return new TelraamTrafficReader();
+    }
+
+    @Bean
     public DatexTrafficProcessor getTrafficProcessor() {
         return new DatexTrafficProcessor();
     }
+
+    @Bean
+    public TelraamTrafficProcessor getTelraamTrafficProcessor() {
+        return new TelraamTrafficProcessor();
+    }
+
     @Bean
     public DatexMeteoProcessor getMeteoProcessor() {
         return new DatexMeteoProcessor();
@@ -98,8 +105,8 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public JdbcBatchItemWriter<TraficPoint> writer() {
-        JdbcBatchItemWriter<TraficPoint> itemWriter = new JdbcBatchItemWriter<>();
+    public JdbcBatchItemWriter<TrafficPoint> writer() {
+        JdbcBatchItemWriter<TrafficPoint> itemWriter = new JdbcBatchItemWriter<>();
 
         itemWriter.setDataSource(this.dataSource);
 //        itemWriter.setSql("INSERT INTO trafic(time , camera , latitude, longitude, direction, road , averageVehicleSpeed, vehicleFlowRate, trafficConcentration)" +
@@ -137,6 +144,25 @@ public class BatchConfiguration {
         return itemWriter;
     }
 
+    @Bean
+    public JdbcBatchItemWriter<SegmentPoint> writerTelraam() {
+        JdbcBatchItemWriter<SegmentPoint> itemWriter = new JdbcBatchItemWriter<>();
+        itemWriter.setDataSource(this.dataSource);
+        itemWriter.setSql(Datex.INSERT_TELRAAM);
+        itemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider());
+        itemWriter.afterPropertiesSet();
+        return itemWriter;
+    }
+
+    @Bean
+    public Step stepTelraam(JdbcBatchItemWriter<SegmentPoint> writerTelraam) {
+        return stepBuilderFactory.get("stepTelraam")
+                .<SegmentMeasure, SegmentPoint>chunk(10)
+                .reader(getTelraamTrafficReader())
+                .processor(getTelraamTrafficProcessor())
+                .writer(writerTelraam)
+                .build();
+    }
 
     @Bean
     public Step stepMeteo(JdbcBatchItemWriter<MeteoMeasure> writerMeteo) {
@@ -149,15 +175,16 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step(JdbcBatchItemWriter<TraficPoint> writer) {
+    public Step step(JdbcBatchItemWriter<TrafficPoint> writer) {
         return stepBuilderFactory.get("stepD")
-                .<TrafficMeasure, TraficPoint>chunk(10)
+                .<TrafficMeasure, TrafficPoint>chunk(10)
                 .reader(getDatexTrafficReader(null))
                 .processor(getTrafficProcessor())
                 .writer(writer)
                 .build();
     }
-    @Bean(name="readDatexJob")
+
+    @Bean(name = "readDatexJob")
     public Job readDatexJob(Step step) {
         return jobBuilderFactory.get("readDatexJob")
                 .incrementer(new RunIdIncrementer())
@@ -166,16 +193,26 @@ public class BatchConfiguration {
                 .build();
     }
 
-    @Bean(name="logTaskletJob")
+    @Bean(name = "logTaskletJob")
     public Job logTaskletJob() {
         return this.jobBuilderFactory.get("logTasklet").incrementer(new RunIdIncrementer())
                 .start(stepBuilderFactory.get("stepTask").tasklet(logtasklet).build()).build();
     }
-    @Bean(name="readMeteoJob")
+
+    @Bean(name = "readMeteoJob")
     public Job readMeteoJob(Step stepMeteo) {
-        return jobBuilderFactory.get("readDatexJob")
+        return jobBuilderFactory.get("readMeteoJob")
                 .incrementer(new RunIdIncrementer())
                 .flow(stepMeteo)
+                .end()
+                .build();
+    }
+
+    @Bean(name = "readTelraamJob")
+    public Job readTelraamJob(Step stepTelraam) {
+        return jobBuilderFactory.get("readTelraamJob")
+                .incrementer(new RunIdIncrementer())
+                .flow(stepTelraam)
                 .end()
                 .build();
     }

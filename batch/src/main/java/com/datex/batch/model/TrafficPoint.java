@@ -2,7 +2,7 @@ package com.datex.batch.model;
 
 import java.sql.Timestamp;
 
-public class TraficPoint {
+public class TrafficPoint {
     private Timestamp time;
     private String camera;
     private String latitude;

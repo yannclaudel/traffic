@@ -31,6 +31,9 @@ public class BatchApplication {
     @Qualifier("readMeteoJob")
     Job jobMeteo;
 
+    @Autowired
+    @Qualifier("readTelraamJob")
+    Job jobTelraam;
 
     public static void main(String[] args) {
         SpringApplication.run(BatchApplication.class, args);
@@ -51,7 +54,7 @@ public class BatchApplication {
 
     }
 
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void performMeteo() throws Exception {
         JobParameters params = null;
         String tmsp = String.valueOf(System.currentTimeMillis());
@@ -59,7 +62,16 @@ public class BatchApplication {
                 .addString("JobID", tmsp)
                 .toJobParameters();
         jobLauncher.run(jobMeteo, params);
+    }
 
+    @Scheduled(cron = "0 */1 * * * ?")
+    public void performTelraam() throws Exception {
+        JobParameters params = null;
+        String tmsp = String.valueOf(System.currentTimeMillis());
+        params = new JobParametersBuilder()
+                .addString("JobID", tmsp)
+                .toJobParameters();
+        jobLauncher.run(jobTelraam, params);
     }
 
     @Scheduled(cron = "0 */5 * * * ?")

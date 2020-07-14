@@ -8,6 +8,7 @@ public class Datex {
     public static final int INTERVAL_IN_MINUTE = 3;
 
     public static final String URL_METEO = "https://www.cita.lu/info_trafic/datex/weather_dynamic.xml";
+    public static final String URL_TELRAAM = "https://telraam-api.net/v0/reports/9000000411";
 
     public static final String TRAFFIC_A1 = "https://www.cita.lu/info_trafic/datex/trafficstatus_a1";
     public static final String TRAFFIC_A3 = "https://www.cita.lu/info_trafic/datex/trafficstatus_a3";
@@ -42,5 +43,29 @@ public class Datex {
         return Collections.unmodifiableMap(result);
     }
     public static final String UNKNOWN = "Unknown";
+
+    public static final String INSERT_TELRAAM = "INSERT INTO telraam(time,camera,timezone,pedestrian,bike,car,lorry,pedestrian_lft,bike_lft,car_lft,lorry_lft,pedestrian_rgt,bike_rgt,car_rgt,lorry_rgt,car_speed_00,car_speed_10,car_speed_20,car_speed_30,car_speed_40,car_speed_50,car_speed_60,car_speed_70)\n" +
+            " VALUES (:time,:camera,:timezone,:pedestrian,:bike,:car,:lorry,:pedestrian_lft,:bike_lft,:car_lft,:lorry_lft,:pedestrian_rgt,:bike_rgt,:car_rgt,:lorry_rgt,:car_speed_00,:car_speed_10,:car_speed_20,:car_speed_30,:car_speed_40,:car_speed_50,:car_speed_60,:car_speed_70)\n" +
+            " ON CONFLICT (time, camera) DO UPDATE\n" +
+            " SET pedestrian = excluded.pedestrian  ,\n" +
+            "bike = excluded.bike  ,\n" +
+            "car = excluded.car  ,\n" +
+            "lorry = excluded.lorry  ,\n" +
+            "pedestrian_lft = excluded.pedestrian_lft  ,\n" +
+            "bike_lft = excluded.bike_lft  ,\n" +
+            "car_lft = excluded.car_lft  ,\n" +
+            "lorry_lft = excluded.lorry_lft  ,\n" +
+            "pedestrian_rgt = excluded.pedestrian_rgt  ,\n" +
+            "bike_rgt = excluded.bike_rgt  ,\n" +
+            "car_rgt = excluded.car_rgt  ,\n" +
+            "lorry_rgt = excluded.lorry_rgt  ,\n" +
+            "car_speed_00 = excluded.car_speed_00  ,\n" +
+            "car_speed_10 = excluded.car_speed_10  ,\n" +
+            "car_speed_20 = excluded.car_speed_20  ,\n" +
+            "car_speed_30 = excluded.car_speed_30  ,\n" +
+            "car_speed_40 = excluded.car_speed_40  ,\n" +
+            "car_speed_50 = excluded.car_speed_50  ,\n" +
+            "car_speed_60 = excluded.car_speed_60  ,\n" +
+            "car_speed_70 = excluded.car_speed_70;";
 
 }
