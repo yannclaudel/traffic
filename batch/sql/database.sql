@@ -409,3 +409,25 @@ INSERT INTO meteo(time , point , humidity , no_precipitation , millimetres_per_h
                  VALUES (time, :id, :humidity, :noPrecipitation, :millimetresPerHourIntensity, :roadSurfaceTemperature, :temperatureBelowRoadSurface, :weatherRelatedRoadConditionType, :airTemperature, :dewPointTemperature, :windSpeed, :maximumWindSpeed, :windDirectionBearing, :statusType)
                  ON CONFLICT (time, camera) DO NOTHING
 
+SELECT
+  t.time AS "time",
+  t.camera AS metric,
+  t.vehicle_flow_rate
+FROM trafic_time as t, camera as c
+WHERE
+  t.camera = c.camera
+  c.road = 'A3'
+ORDER BY 1,2
+
+
+select
+(car_speed_00*5+car_speed_10*15+car_speed_20*25+car_speed_30*35+car_speed_40*45+car_speed_50*55+car_speed_60*65+car_speed_70*75)
+/(car_speed_00 +car_speed_10*15+car_speed_20+car_speed_30+car_speed_40+car_speed_50+car_speed_60+car_speed_70) as speed
+
+SELECT time_bucket('1 days', time) AS time,
+    SUM(bike)
+
+  FROM trafic
+  WHERE time > NOW() - INTERVAL '24 hours' and road ='A3'
+  GROUP BY fifteen_min, camera
+  ORDER BY camera DESC ,fifteen_min DESC ;

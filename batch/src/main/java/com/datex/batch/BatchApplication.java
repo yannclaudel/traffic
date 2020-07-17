@@ -64,7 +64,7 @@ public class BatchApplication {
         jobLauncher.run(jobMeteo, params);
     }
 
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void performTelraam() throws Exception {
         JobParameters params = null;
         String tmsp = String.valueOf(System.currentTimeMillis());

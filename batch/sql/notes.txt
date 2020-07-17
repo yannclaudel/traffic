@@ -1,0 +1,11 @@
+
+Objectifs :
+
+SELECT
+  $__timeGroup(time, '24h') as day,
+  sum(car)
+FROM telraam
+WHERE
+  $__timeFilter(time)
+GROUP BY day
+ORDER BY day

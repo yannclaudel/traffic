@@ -38,3 +38,6 @@ docker exec -it timescaledb psql -U postgres
 ################################
 	graphana
 ################################
+docker run -d -p 3000:3000 grafana/grafana
+localhost:3000 admin/admin
+new password : graphana
