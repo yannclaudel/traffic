@@ -116,9 +116,9 @@ public class BatchConfiguration {
 //                " vehicleFlowRate = excluded.vehicleFlowRate, " +
 //                " trafficConcentration = excluded.trafficConcentration;");
 
-        itemWriter.setSql("INSERT INTO trafic_time(time , camera , average_vehicle_speed, vehicle_flow_rate, traffic_concentration)" +
+        itemWriter.setSql("INSERT INTO trafic_time(measure_datetime , camera , average_vehicle_speed, vehicle_flow_rate, traffic_concentration)" +
                 " VALUES (:time, :camera, :averagevehiclespeed,:vehicleflowrate,:trafficconcentration)" +
-                " ON CONFLICT (time, camera) DO UPDATE " +
+                " ON CONFLICT (measure_datetime, camera) DO UPDATE " +
                 " SET average_vehicle_speed = excluded.average_vehicle_speed, " +
                 " vehicle_flow_rate = excluded.vehicle_flow_rate, " +
                 " traffic_concentration = excluded.traffic_concentration;");
@@ -135,9 +135,9 @@ public class BatchConfiguration {
 
         itemWriter.setDataSource(this.dataSource);
 
-        itemWriter.setSql("INSERT INTO meteo(time , point , humidity , no_precipitation , millimetres_per_hour_intensity , road_surface_temperature , temperature_below_road_surface , weather_related_road_condition_type , air_temperature , dew_point_temperature , wind_speed , maximum_wind_speed , wind_direction_bearing , status_type)\n" +
+        itemWriter.setSql("INSERT INTO meteo(measure_datetime , point , humidity , no_precipitation , millimetres_per_hour_intensity , road_surface_temperature , temperature_below_road_surface , weather_related_road_condition_type , air_temperature , dew_point_temperature , wind_speed , maximum_wind_speed , wind_direction_bearing , status_type)\n" +
                 "                 VALUES (:time, :id, :humidity, :noPrecipitation, :millimetresPerHourIntensity, :roadSurfaceTemperature, :temperatureBelowRoadSurface, :weatherRelatedRoadConditionType, :airTemperature, :dewPointTemperature, :windSpeed, :maximumWindSpeed, :windDirectionBearing, :statusType)\n" +
-                "                 ON CONFLICT (time, point) DO UPDATE SET millimetres_per_hour_intensity = excluded.millimetres_per_hour_intensity");
+                "                 ON CONFLICT (measure_datetime, point) DO UPDATE SET millimetres_per_hour_intensity = excluded.millimetres_per_hour_intensity");
 
         itemWriter.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider());
         itemWriter.afterPropertiesSet();

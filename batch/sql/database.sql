@@ -11,6 +11,7 @@ GRANT ALL PRIVILEGES ON DATABASE trafic TO traficuser;
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
 -- create trafic tables
+DROP TABLE IF EXISTS camera CASCADE;
 CREATE TABLE camera (
     camera    text         NOT NULL,
 	latitude NUMERIC NOT   NULL,
@@ -20,16 +21,18 @@ CREATE TABLE camera (
     road varchar(10)       NULL
 );
 
+DROP TABLE IF EXISTS trafic_time CASCADE;
 CREATE TABLE trafic_time (
-    time TIMESTAMPTZ         NOT NULL,
+    measure_datetime TIMESTAMPTZ         NOT NULL,
     camera text                NOT NULL,
     average_vehicle_speed NUMERIC    NULL,
 	vehicle_flow_rate      NUMERIC    NULL,
 	traffic_concentration NUMERIC   NULL
 );
 
+DROP TABLE IF EXISTS meteo CASCADE;
 CREATE TABLE meteo(
-    time        TIMESTAMPTZ         NOT NULL,
+    measure_datetime        TIMESTAMPTZ         NOT NULL,
     point       text       NOT NULL,
     humidity    NUMERIC    NULL,
     no_precipitation text    NULL,
@@ -44,8 +47,9 @@ CREATE TABLE meteo(
     wind_direction_bearing    NUMERIC    NULL,
     status_type text  NULL);
 
+DROP TABLE IF EXISTS telraam CASCADE;
 CREATE TABLE telraam(
-    time        TIMESTAMPTZ         NOT NULL,
+    measure_datetime        TIMESTAMPTZ         NOT NULL,
     camera       text       NOT NULL,
     timezone text NULL,
     pedestrian NUMERIC NULL,
@@ -69,14 +73,14 @@ CREATE TABLE telraam(
     car_speed_60 NUMERIC NULL,
     car_speed_70 NUMERIC NULL);
 
-SELECT create_hypertable('trafic_time', 'time');
-SELECT create_hypertable('meteo', 'time');
-SELECT create_hypertable('telraam', 'time');
+SELECT create_hypertable('trafic_time', 'measure_datetime');
+SELECT create_hypertable('meteo', 'measure_datetime');
+SELECT create_hypertable('telraam', 'measure_datetime');
 
-CREATE UNIQUE INDEX on trafic_time (time, camera);
+CREATE UNIQUE INDEX on trafic_time (measure_datetime, camera);
 CREATE UNIQUE INDEX on camera (camera);
-CREATE UNIQUE INDEX on meteo (time, point);
-CREATE UNIQUE INDEX on telraam (time, camera);
+CREATE UNIQUE INDEX on meteo (measure_datetime, point);
+CREATE UNIQUE INDEX on telraam (measure_datetime, camera);
 
 GRANT ALL PRIVILEGES ON TABLE trafic_time TO traficuser;
 GRANT ALL PRIVILEGES ON TABLE camera TO traficuser;

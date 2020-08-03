@@ -44,9 +44,9 @@ public class Datex {
     }
     public static final String UNKNOWN = "Unknown";
 
-    public static final String INSERT_TELRAAM = "INSERT INTO telraam(time,camera,timezone,pedestrian,bike,car,lorry,pedestrian_lft,bike_lft,car_lft,lorry_lft,pedestrian_rgt,bike_rgt,car_rgt,lorry_rgt,car_speed_00,car_speed_10,car_speed_20,car_speed_30,car_speed_40,car_speed_50,car_speed_60,car_speed_70)\n" +
+    public static final String INSERT_TELRAAM = "INSERT INTO telraam(measure_datetime,camera,timezone,pedestrian,bike,car,lorry,pedestrian_lft,bike_lft,car_lft,lorry_lft,pedestrian_rgt,bike_rgt,car_rgt,lorry_rgt,car_speed_00,car_speed_10,car_speed_20,car_speed_30,car_speed_40,car_speed_50,car_speed_60,car_speed_70)\n" +
             " VALUES (:time,:camera,:timezone,:pedestrian,:bike,:car,:lorry,:pedestrian_lft,:bike_lft,:car_lft,:lorry_lft,:pedestrian_rgt,:bike_rgt,:car_rgt,:lorry_rgt,:car_speed_00,:car_speed_10,:car_speed_20,:car_speed_30,:car_speed_40,:car_speed_50,:car_speed_60,:car_speed_70)\n" +
-            " ON CONFLICT (time, camera) DO UPDATE\n" +
+            " ON CONFLICT (measure_datetime, camera) DO UPDATE\n" +
             " SET pedestrian = excluded.pedestrian  ,\n" +
             "bike = excluded.bike  ,\n" +
             "car = excluded.car  ,\n" +
