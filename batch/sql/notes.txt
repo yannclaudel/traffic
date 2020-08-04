@@ -48,8 +48,24 @@ docker cp createEmptyDB.sql traficdb:createEmptyDB.sql
 docker exec -it traficdb psql -U postgres -f createFullDB.sql
 docker exec -it traficdb psql -U postgres
 
+COPY (SELECT * FROM telraam) TO telraam.csv DELIMITER ',' CSV
+\COPY (SELECT * FROM telraam) TO '/telraam.csv' DELIMITER ',' CSV;
+\COPY (SELECT * FROM trafic_time) TO '/trafic_time.csv' DELIMITER ',' CSV;
 
+docker cp timescaledb:trafic_time.csv trafic_time.csv
+docker cp timescaledb:telraam.csv telraam.csv
 
+################################
+	create db with initial load
+	execute each command in .../batch/sql
+################################
+docker run -d --name traficdb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg12
+docker cp trafic.bak traficdb:trafic.bak
+docker cp createFullDB.sql traficdb:createFullDB.sql
+docker cp end.sql traficdb:end.sql
+docker exec -it traficdb psql -U postgres -f createFullDB.sql
+docker exec -it traficdb pg_restore -U postgres -Fc -d trafic trafic.bak
+docker exec -it traficdb psql -U postgres -f end.sql
 
 ################################
 	graphana
