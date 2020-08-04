@@ -10,15 +10,20 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -48,9 +53,16 @@ public class BatchConfiguration {
 
     @Bean
     @StepScope
+    public ClassPathResource getSourceFile(@Value("#{jobParameters['sourceFile']}") String sourceFile) {
+        return new ClassPathResource(sourceFile);
+    }
+
+    @Bean
+    @StepScope
     public DatexTrafficReader getDatexTrafficReader(@Value("#{jobParameters['targetUrl']}") String targetUrl) {
         return new DatexTrafficReader(targetUrl);
     }
+
 
     @Bean
     @StepScope
@@ -69,6 +81,10 @@ public class BatchConfiguration {
         return new DatexTrafficProcessor();
     }
 
+    @Bean
+    public DatexTrafficCSVProcessor getTrafficCSVProcessor() {
+        return new DatexTrafficCSVProcessor();
+    }
     @Bean
     public TelraamTrafficProcessor getTelraamTrafficProcessor() {
         return new TelraamTrafficProcessor();
@@ -213,6 +229,44 @@ public class BatchConfiguration {
         return jobBuilderFactory.get("readTelraamJob")
                 .incrementer(new RunIdIncrementer())
                 .flow(stepTelraam)
+                .end()
+                .build();
+    }
+
+
+    @Bean
+    public FlatFileItemReader<TrafficMeasureCSV> readerTrafficMeasureCSV() {
+        return new FlatFileItemReaderBuilder<TrafficMeasureCSV>()
+                .name("trafficMeasureCSVItemReader")
+                //.resource(new ClassPathResource(getSourceFile(null)))
+                .resource(getSourceFile(null))
+                .delimited()
+                .delimiter(";")
+                .names(new String[]{"id", "measurementTime","latitude","longitude","direction","road","status","averageVehicleSpeed","vehicleFlowRate","trafficConcentration"})
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<TrafficMeasureCSV>() {{
+                    setTargetType(TrafficMeasureCSV.class);
+                }})
+                .build();
+    }
+
+    @Bean
+    public Step stepCSV(JdbcBatchItemWriter<TrafficPoint> writer,FlatFileItemReader<TrafficMeasureCSV> readerTrafficMeasureCSV) {
+        return stepBuilderFactory.get("stepCSV")
+                .<TrafficMeasureCSV, TrafficPoint>chunk(10)
+                .reader(readerTrafficMeasureCSV)
+                .processor(getTrafficCSVProcessor())
+                .writer(writer)
+                .faultTolerant()
+                .skipLimit(1000)
+                .skip(ParseException.class)
+                .build();
+    }
+
+    @Bean(name = "readTrafficCSVJob")
+    public Job readTrafficCSVJob(Step stepCSV) {
+        return jobBuilderFactory.get("readTrafficCSVJob")
+                .incrementer(new RunIdIncrementer())
+                .flow(stepCSV)
                 .end()
                 .build();
     }

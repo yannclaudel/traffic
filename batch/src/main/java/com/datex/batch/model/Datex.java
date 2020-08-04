@@ -21,15 +21,15 @@ public class Datex {
     public static final String TRAFFIC_EVENT = "http://www.cita.lu/info_trafic/datex/situationrecord";
 
     public static final Map<String, String> RESOURCE_MAP = createMap();
-    public static final String RESOURCE_DEFAULT = "out/datexData.csv";
+    public static final String RESOURCE_DEFAULT = "datexData.csv";
 
-    private static final String RESOURCE_A1 = "out/datexDataA1.csv";
-    private static final String RESOURCE_A3 = "out/datexDataA3.csv";
-    private static final String RESOURCE_A4 = "out/datexDataA4.csv";
-    private static final String RESOURCE_A6 = "out/datexDataA6.csv";
-    private static final String RESOURCE_A7 = "out/datexDataA7.csv";
-    private static final String RESOURCE_A13 = "out/datexDataA13.csv";
-    private static final String RESOURCE_B40 = "out/datexDataB40.csv";
+    private static final String RESOURCE_A1 = "datexDataA1.csv";
+    private static final String RESOURCE_A3 = "datexDataA3.csv";
+    private static final String RESOURCE_A4 = "datexDataA4.csv";
+    private static final String RESOURCE_A6 = "datexDataA6.csv";
+    private static final String RESOURCE_A7 = "datexDataA7.csv";
+    private static final String RESOURCE_A13 = "datexDataA13.csv";
+    private static final String RESOURCE_B40 = "datexDataB40.csv";
 
     private static Map<String, String> createMap() {
         Map<String, String> result = new HashMap<String, String>();

@@ -35,9 +35,12 @@ public class BatchApplication {
     @Qualifier("readTelraamJob")
     Job jobTelraam;
 
+
     public static void main(String[] args) {
         SpringApplication.run(BatchApplication.class, args);
     }
+
+
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void perform() throws Exception {
@@ -47,7 +50,7 @@ public class BatchApplication {
             params = new JobParametersBuilder()
                     .addString("JobID", tmsp + url.substring(url.length() - 2))
                     .addString("targetUrl", url)
-                    .addString("targetFile", Datex.RESOURCE_MAP.get(url))
+                    .addString("targetFile", "out/"+Datex.RESOURCE_MAP.get(url))
                     .toJobParameters();
             jobLauncher.run(job, params);
         }
@@ -84,6 +87,5 @@ public class BatchApplication {
         jobLauncher.run(jobLog, params);
 
     }
-
 
 }
