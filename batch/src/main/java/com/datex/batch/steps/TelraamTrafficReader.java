@@ -42,7 +42,7 @@ public class TelraamTrafficReader implements ItemReader<SegmentMeasure> {
 
             Instant instant = Instant.now();
             LocalDateTime now = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
-            LocalDateTime yesterday = now.minusDays(1);
+            LocalDateTime yesterday = now.minusDays(7);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
             String today = now.format(formatter);

@@ -52,6 +52,7 @@ CREATE TABLE telraam(
     measure_datetime        TIMESTAMPTZ         NOT NULL,
     camera       text       NOT NULL,
     timezone text NULL,
+    pct_up NUMERIC NULL,
     pedestrian NUMERIC NULL,
     bike NUMERIC NULL,
     car NUMERIC NULL,

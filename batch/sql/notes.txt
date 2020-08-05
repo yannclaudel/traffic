@@ -53,7 +53,7 @@ COPY (SELECT * FROM telraam) TO telraam.csv DELIMITER ',' CSV
 \COPY (SELECT * FROM trafic_time) TO '/trafic_time.csv' DELIMITER ',' CSV;
 
 docker cp timescaledb:trafic_time.csv trafic_time.csv
-docker cp timescaledb:telraam.csv telraam.csv
+docker cp traficdb:telraam.csv telraam.csv
 
 ################################
 	create db with initial load
